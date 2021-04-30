@@ -61,7 +61,13 @@ function App() {
 
   useEffect(() => {
     if (username === "") return;
-    const s = io("https://sketchr-io.herokuapp.com/");
+    var connectionOptions = {
+      "force new connection": true,
+      reconnectionAttempts: "Infinity",
+      timeout: 10000,
+      transports: ["websocket"],
+    };
+    const s = io("https://sketchr-io.herokuapp.com/", connectionOptions);
     setSocket(s);
 
     s.emit("username", username);
@@ -173,7 +179,7 @@ function App() {
     if (otherUsers.every((user) => user.hasGuessed)) {
       alert("binbin");
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [playerGuesses]);
 
   useEffect(() => {
