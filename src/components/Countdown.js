@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import useInterval from "react-useinterval";
 
 const Countdown = ({ isRunning, setIsRunning, time, setTime }) => {

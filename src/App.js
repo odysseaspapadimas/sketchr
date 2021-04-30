@@ -173,6 +173,7 @@ function App() {
     if (otherUsers.every((user) => user.hasGuessed)) {
       alert("binbin");
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [playerGuesses]);
 
   useEffect(() => {
