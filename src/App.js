@@ -52,6 +52,7 @@ function App() {
   };
 
   const [word, setWord] = useState("");
+  const [wordInput, setWordInput] = useState("");
   const [guess, setGuess] = useState("");
   const [playerGuesses, setPlayerGuesses] = useState([]);
 
@@ -67,7 +68,7 @@ function App() {
       timeout: 10000,
       transports: ["websocket"],
     };
-    const s = io("https://sketchr-io.herokuapp.com/", connectionOptions);
+    const s = io("http://localhost:3001", connectionOptions);
     setSocket(s);
 
     s.emit("username", username);
@@ -212,6 +213,10 @@ function App() {
   const startTimer = () => {
     socket.emit("start-timer");
   };
+
+  const handleSetWord = (word) => {
+    socket.emit("set-word", word);
+  };
   //PUT in a start button for person drawing then start timer, add sound if time is less than 10
   //show amount of letters and maybe letter hints every 20 seconds or
   //start thinking about random word choicing, morning gorgeous
@@ -222,7 +227,30 @@ function App() {
         className="flex flex-col items-center"
         style={{ backgroundColor: "#0b0e11" }}
       >
-        {isDrawing && <h1 className="text-white">{word}</h1>}
+        {isDrawing && (
+          <>
+            <input
+              className="ml-2"
+              type="text"
+              value={wordInput}
+              onChange={(e) => setWordInput(e.target.value)}
+            />
+            <button
+              className="bg-white text-black px-3 py-1"
+              onClick={() => handleSetWord(wordInput)}
+            >
+              Set Word
+            </button>
+            <button
+              className="bg-white text-black px-4 py-1 rounded-sm ml-3"
+              onClick={() => startTimer()}
+            >
+              Start
+            </button>
+            <h1 className="text-white">{word}</h1>
+          </>
+        )}
+
         <div className="flex justify-center items-center">
           <Countdown
             isRunning={isRunning}
@@ -230,12 +258,6 @@ function App() {
             time={time}
             setTime={setTime}
           />
-          <button
-            className="bg-white text-black px-4 py-1 rounded-sm ml-3"
-            onClick={() => startTimer()}
-          >
-            Start
-          </button>
         </div>
         <div className="h-screen flex justify-center items-center">
           <HotKeys
@@ -243,7 +265,7 @@ function App() {
             handlers={handlers}
             className="flex flex-col sm:flex-row justify-center items-center"
           >
-            <UserList username={username} users={userList} />
+            <UserList myUsername={username} users={userList} />
             <div onMouseUp={() => isDrawing && sendPaths(paths)}>
               <div
                 className={
@@ -306,17 +328,10 @@ function App() {
                 <div className="border border-gray-400 h-80 w-full text-white overflow-y-scroll">
                   {playerGuesses.map(({ otherUsername, guess }) => (
                     <div className="ml-2 my-1 flex flex-col">
-                      {!hasGuessedWord ? (
+                      {guess !== word && (
                         <div className="flex">
                           <p className="font-semibold mr-2">{otherUsername}:</p>
                           <p>{guess}</p>
-                        </div>
-                      ) : (
-                        <div className="flex">
-                          <p className="font-semibold mr-2 text-green-600">
-                            {otherUsername}:
-                          </p>
-                          <p className="text-green-600">{guess}</p>
                         </div>
                       )}
                       {guess === word && (
