@@ -68,7 +68,7 @@ function App() {
       timeout: 10000,
       transports: ["websocket"],
     };
-    const s = io("http://localhost:3001", connectionOptions);
+    const s = io("https://sketchr-io.herokuapp.com/", connectionOptions);
     setSocket(s);
 
     s.emit("username", username);
